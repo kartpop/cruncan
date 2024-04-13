@@ -1,9 +1,16 @@
 package config
 
 type Model struct {
-	OneHttpAddr string `mapstructure:"ONE_HTTP_ADDR"`
-	Database    DatabaseConfig
-	Kafka       KafkaConfig
+	Server   ServerConfig
+	Database DatabaseConfig
+	Kafka    KafkaConfig
+}
+
+type ServerConfig struct {
+	HttpAddr     string `mapstructure:"HTTP_ADDR"`
+	WriteTimeout int    `mapstructure:"WRITE_TIMEOUT"`
+	ReadTimeout  int    `mapstructure:"READ_TIMEOUT"`
+	IdleTimeout  int    `mapstructure:"IDLE_TIMEOUT"`
 }
 
 type DatabaseConfig struct {
