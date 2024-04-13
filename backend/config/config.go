@@ -1,13 +1,13 @@
 package config
 
 type Model struct {
-	Server   ServerConfig
-	Database DatabaseConfig
-	Kafka    KafkaConfig
+	Server   ServerConfig   `mapstructure:"SERVER"`
+	Database DatabaseConfig `mapstructure:"DATABASE"`
+	Kafka    KafkaConfig    `mapstructure:"KAFKA"`
 }
 
 type ServerConfig struct {
-	HttpAddr     string `mapstructure:"HTTP_ADDR"`
+	Addr         string `mapstructure:"ADDR"`
 	WriteTimeout int    `mapstructure:"WRITE_TIMEOUT"`
 	ReadTimeout  int    `mapstructure:"READ_TIMEOUT"`
 	IdleTimeout  int    `mapstructure:"IDLE_TIMEOUT"`

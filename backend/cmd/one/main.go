@@ -1,28 +1,35 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"flag"
+	"fmt"
+	"log/slog"
 	"net/http"
 	"time"
 
 	"github.com/alexedwards/flow"
 	"github.com/kartpop/cruncan/backend/config"
+	oneHttp "github.com/kartpop/cruncan/backend/internal/one/http"
 	cfgUtil "github.com/kartpop/cruncan/backend/pkg/config"
 	"github.com/kartpop/cruncan/backend/pkg/util"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
 type Application struct {
-	name string
-	cfg  *config.Model
+	name           string
+	cfg            *config.Model
 	onePostHandler http.HandlerFunc
 }
 
 func NewApplication(name string, cfg *config.Model) *Application {
+	oneHandler := oneHttp.NewHandler()
+
 	return &Application{
-		name: name,
-		cfg:  cfg,
+		name:           name,
+		cfg:            cfg,
+		onePostHandler: oneHandler.Post,
 	}
 }
 
@@ -38,6 +45,8 @@ func (app *Application) routes() http.Handler {
 }
 
 func main() {
+	ctx := context.Background()
+
 	var httpAddr string
 	flag.StringVar(&httpAddr, "http", "", "address to listen for http traffic")
 	dbServer := flag.String("dbserver", "", "database server name")
@@ -49,7 +58,7 @@ func main() {
 	var envConfig = cfgUtil.LoadConfigOrPanic[config.Model]()
 
 	if httpAddr != "" {
-		envConfig.Server.HttpAddr = httpAddr
+		envConfig.Server.Addr = httpAddr
 	}
 	if *dbServer != "" {
 		envConfig.Database.Server = *dbServer
@@ -64,7 +73,7 @@ func main() {
 	app := NewApplication("One", envConfig)
 
 	server := &http.Server{
-		Addr:         envConfig.Server.HttpAddr,
+		Addr:         envConfig.Server.Addr,
 		WriteTimeout: time.Duration(envConfig.Server.WriteTimeout) * time.Second,
 		ReadTimeout:  time.Duration(envConfig.Server.ReadTimeout) * time.Second,
 		IdleTimeout:  time.Duration(envConfig.Server.IdleTimeout) * time.Second,
@@ -76,4 +85,12 @@ func main() {
 			util.Fatal(err.Error())
 		}
 	}()
+
+	terminatorFunctions := app.Run()
+
+	slog.InfoContext(ctx, fmt.Sprintf("%v is running!", app.name))
+
+	util.GracefulShutdown(
+		server, time.Second*5,
+		terminatorFunctions...)
 }
