@@ -1,0 +1,32 @@
+version: '3.5'
+
+services:
+  one-db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: one
+      POSTGRES_PASSWORD: one
+      POSTGRES_DB: one-db-local
+    ports:
+      - "54321:5432"
+    volumes:
+      - one-db-data:/var/lib/postgresql/data
+    networks:
+      - one-network
+
+  flyway:
+    image: flyway/flyway
+    command: -url=jdbc:postgresql://one-db:5432/one-db-local -user=one -password=one -connectRetries=60 migrate
+    volumes:
+      - ./database/flyway/sql:/flyway/sql
+    depends_on:
+      - one-db
+    networks:
+      - one-network
+
+volumes:
+  one-db-data:
+
+networks:
+  one-network:
+    driver: bridge
