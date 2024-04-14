@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/alexedwards/flow"
-	"github.com/kartpop/cruncan/backend/config"
-	oneHttp "github.com/kartpop/cruncan/backend/internal/one/http"
+	"github.com/kartpop/cruncan/backend/one/config"
+	oneHttp "github.com/kartpop/cruncan/backend/one/http"
 	cfgUtil "github.com/kartpop/cruncan/backend/pkg/config"
 	"github.com/kartpop/cruncan/backend/pkg/util"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"

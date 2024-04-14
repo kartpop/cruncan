@@ -1,8 +1,11 @@
-module github.com/kartpop/cruncan/backend
+module github.com/kartpop/cruncan/backend/one
 
-go 1.22
+go 1.22.2
 
-require github.com/spf13/viper v1.18.2
+require (
+	github.com/kartpop/cruncan/backend/pkg v0.0.0-20240414030215-367cbf6f98bc
+	github.com/spf13/viper v1.18.2 // indirect
+)
 
 require (
 	github.com/felixge/httpsnoop v1.0.4 // indirect
