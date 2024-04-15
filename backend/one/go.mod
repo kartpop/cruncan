@@ -3,7 +3,7 @@ module github.com/kartpop/cruncan/backend/one
 go 1.22.2
 
 require (
-	github.com/kartpop/cruncan/backend/pkg v0.0.0-20240414030215-367cbf6f98bc
+	github.com/kartpop/cruncan/backend/pkg v0.0.0-20240415081054-42e55c673624
 	github.com/spf13/viper v1.18.2 // indirect
 )
 

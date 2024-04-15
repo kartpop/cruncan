@@ -15,5 +15,5 @@ go run cmd/api/main.go
 Run app with docker-compose
 
 ```shell
-docker compose up
+docker compose up -d
 ```
