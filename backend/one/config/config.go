@@ -1,7 +1,7 @@
 package config
 
 import (
-	gormUtil "github.com/kartpop/cruncan/backend/pkg/util/database/gorm"
+	gormUtil "github.com/kartpop/cruncan/backend/pkg/database/gorm"
 )
 
 type Model struct {

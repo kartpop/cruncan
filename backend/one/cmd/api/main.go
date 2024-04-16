@@ -15,7 +15,7 @@ import (
 	oneHttp "github.com/kartpop/cruncan/backend/one/http"
 	cfgUtil "github.com/kartpop/cruncan/backend/pkg/config"
 	"github.com/kartpop/cruncan/backend/pkg/util"
-	gormUtil "github.com/kartpop/cruncan/backend/pkg/util/database/gorm"
+	gormUtil "github.com/kartpop/cruncan/backend/pkg/database/gorm"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
