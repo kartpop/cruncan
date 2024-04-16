@@ -7,15 +7,18 @@ import (
 	"log/slog"
 	"net/http"
 
+	onerequest "github.com/kartpop/cruncan/backend/one/database/one_request"
 	"github.com/kartpop/cruncan/backend/pkg/model"
 )
 
 type Handler struct {
+	repo   onerequest.Repository
 	logger *slog.Logger
 }
 
-func NewHandler() *Handler {
+func NewHandler(repo onerequest.Repository) *Handler {
 	return &Handler{
+		repo:   repo,
 		logger: slog.Default(),
 	}
 }

@@ -1,9 +1,13 @@
 package config
 
+import (
+	gormUtil "github.com/kartpop/cruncan/backend/pkg/util/database/gorm"
+)
+
 type Model struct {
-	Server   ServerConfig   `mapstructure:"SERVER"`
-	Database DatabaseConfig `mapstructure:"DATABASE"`
-	Kafka    KafkaConfig    `mapstructure:"KAFKA"`
+	Server   ServerConfig     `mapstructure:"SERVER"`
+	Database *gormUtil.Config `mapstructure:"DATABASE"`
+	Kafka    KafkaConfig      `mapstructure:"KAFKA"`
 }
 
 type ServerConfig struct {
@@ -12,28 +16,6 @@ type ServerConfig struct {
 	ReadTimeout  int    `mapstructure:"READ_TIMEOUT"`
 	IdleTimeout  int    `mapstructure:"IDLE_TIMEOUT"`
 }
-
-type DatabaseConfig struct {
-	Server   string  `mapstructure:"DATABASE_SERVER"`
-	Port     int     `mapstructure:"DATABASE_PORT"`
-	Name     string  `mapstructure:"DATABASE_NAME"`
-	User     string  `mapstructure:"DATABASE_USER"`
-	Password string  `mapstructure:"DATABASE_PASSWORD"`
-	LogLevel string  `mapstructure:"DATABASE_LOG_LEVEL"`
-	SslMode  SslMode `mapstructure:"DATABASE_SSL_MODE"`
-}
-
-// https://www.postgresql.org/docs/current/libpq-ssl.html
-type SslMode string
-
-const (
-	SslModeDisable    SslMode = SslMode("disable")
-	SslModeAllow      SslMode = SslMode("allow")
-	SslModePrefer     SslMode = SslMode("prefer")
-	SslModeRequire    SslMode = SslMode("require")
-	SslModeVerifyCa   SslMode = SslMode("verify-ca")
-	SslModeVerifyFull SslMode = SslMode("verify-full")
-)
 
 type KafkaConfig struct {
 	Common   KafkaCommon      `mapstructure:"COMMON"`

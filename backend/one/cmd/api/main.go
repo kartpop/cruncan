@@ -11,9 +11,11 @@ import (
 
 	"github.com/alexedwards/flow"
 	"github.com/kartpop/cruncan/backend/one/config"
+	onerequest "github.com/kartpop/cruncan/backend/one/database/one_request"
 	oneHttp "github.com/kartpop/cruncan/backend/one/http"
 	cfgUtil "github.com/kartpop/cruncan/backend/pkg/config"
 	"github.com/kartpop/cruncan/backend/pkg/util"
+	gormUtil "github.com/kartpop/cruncan/backend/pkg/util/database/gorm"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
@@ -24,7 +26,14 @@ type Application struct {
 }
 
 func NewApplication(name string, cfg *config.Model) *Application {
-	oneHandler := oneHttp.NewHandler()
+
+	gormClient, err := gormUtil.NewGormClient(cfg.Database)
+	if err != nil {
+		util.Fatal("database not available on startup: %v", err)
+	}
+
+	oneRequestRepo := onerequest.NewRepository(gormClient)
+	oneHandler := oneHttp.NewHandler(oneRequestRepo)
 
 	return &Application{
 		name:           name,
