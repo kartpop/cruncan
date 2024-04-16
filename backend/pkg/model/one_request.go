@@ -1,5 +1,6 @@
 package model
 
+// OneRequest is a model for the request to /one
 type OneRequest struct {
 	UserID string `json:"user_id"`
 	Prompt string `json:"prompt"`
