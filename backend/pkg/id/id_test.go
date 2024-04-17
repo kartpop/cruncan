@@ -7,8 +7,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAuthIDShouldBe20CharsLong(t *testing.T) {
-	nodeIdSvc, err := NewIDServiceFromIP("127.0.0.1")
+func TestIDShouldBe20CharsLong(t *testing.T) {
+	nodeIdSvc, err := NewServiceFromIP("127.0.0.1")
 	if err != nil {
 		t.Fatal(err)
 	}

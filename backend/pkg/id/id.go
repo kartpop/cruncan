@@ -3,8 +3,9 @@ package id
 import (
 	"encoding/binary"
 	"fmt"
-	"github.com/bwmarrin/snowflake"
 	"net"
+
+	"github.com/bwmarrin/snowflake"
 )
 
 const (
@@ -22,30 +23,30 @@ func init() {
 	snowflake.StepBits = maxSnowflakeBits - snowflake.NodeBits
 }
 
-// IDService is the interface for generating unique ids
+// Service is the interface for generating unique ids
 // Using twitter snowflake to generate unique id with timestamp, node id and step
 // Is a 64 bit id compared to 128 bit id from UUID; inclusion of timestamp allows for sorting
-type IDService interface {
+type Service interface {
 	// GenerateID generates a unique auth id
 	GenerateID() string
 }
 
-// IDServiceImpl is the implementation of the IDService interface
-type IDServiceImpl struct {
+// ServiceImpl is the implementation of the IDService interface
+type ServiceImpl struct {
 	node *snowflake.Node
 }
 
 // GenerateID generates a unique auth ID
-func (i *IDServiceImpl) GenerateID() string {
+func (i *ServiceImpl) GenerateID() string {
 	return fmt.Sprintf("%020d", i.node.Generate())
 }
 
-func NewIDServiceFromIP(iPv4 string) (*IDServiceImpl, error) {
+func NewServiceFromIP(iPv4 string) (*ServiceImpl, error) {
 	nodeId, err := nodeIDFromIP(iPv4)
 	if err != nil {
 		return nil, err
 	}
-	return NewIDService(nodeId)
+	return NewService(nodeId)
 }
 
 func nodeIDFromIP(iPv4 string) (int64, error) {
@@ -60,11 +61,11 @@ func nodeIDFromIP(iPv4 string) (int64, error) {
 	return nodeId, nil
 }
 
-var idService *IDServiceImpl
+var service *ServiceImpl
 
-func NewIDService(nodeId int64) (*IDServiceImpl, error) {
-	if idService != nil {
-		return idService, nil
+func NewService(nodeId int64) (*ServiceImpl, error) {
+	if service != nil {
+		return service, nil
 	}
 
 	node, err := snowflake.NewNode(nodeId)
@@ -72,6 +73,6 @@ func NewIDService(nodeId int64) (*IDServiceImpl, error) {
 		return nil, err
 	}
 
-	idService = &IDServiceImpl{node: node}
-	return idService, nil
+	service = &ServiceImpl{node: node}
+	return service, nil
 }
