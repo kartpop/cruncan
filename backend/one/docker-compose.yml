@@ -14,11 +14,11 @@ services:
     networks:
       - one-network
 
-  flyway:
-    image: flyway/flyway
-    command: -url=jdbc:postgresql://one-db:5432/one-db-local -user=one -password=one -connectRetries=60 migrate
+  migration:
+    image: migrate/migrate:latest
+    entrypoint: migrate -verbose -path=/migrations  -database "postgres://one:one@one-db:5432/one-db-local?sslmode=disable" up
     volumes:
-      - ./database/flyway/sql:/flyway/sql
+      - ./database/migrations:/migrations
     depends_on:
       - one-db
     networks:
