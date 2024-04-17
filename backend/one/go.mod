@@ -3,11 +3,12 @@ module github.com/kartpop/cruncan/backend/one
 go 1.22.2
 
 require (
-	github.com/kartpop/cruncan/backend/pkg v0.0.0-20240416090132-711586e9aed6
+	github.com/kartpop/cruncan/backend/pkg v0.0.0-20240417061835-d383f29bbcf9
 	github.com/spf13/viper v1.18.2 // indirect
 )
 
 require (
+	github.com/bwmarrin/snowflake v0.3.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/go-logr/logr v1.4.1 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect

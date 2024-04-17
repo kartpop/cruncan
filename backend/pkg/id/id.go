@@ -27,7 +27,7 @@ func init() {
 // Using twitter snowflake to generate unique id with timestamp, node id and step
 // Is a 64 bit id compared to 128 bit id from UUID; inclusion of timestamp allows for sorting
 type Service interface {
-	// GenerateID generates a unique auth id
+	// GenerateID generates a unique id
 	GenerateID() string
 }
 
@@ -36,7 +36,7 @@ type ServiceImpl struct {
 	node *snowflake.Node
 }
 
-// GenerateID generates a unique auth ID
+// GenerateID generates a unique ID
 func (i *ServiceImpl) GenerateID() string {
 	return fmt.Sprintf("%020d", i.node.Generate())
 }

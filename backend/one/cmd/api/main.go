@@ -15,6 +15,7 @@ import (
 	oneHttp "github.com/kartpop/cruncan/backend/one/http"
 	cfgUtil "github.com/kartpop/cruncan/backend/pkg/config"
 	gormUtil "github.com/kartpop/cruncan/backend/pkg/database/gorm"
+	"github.com/kartpop/cruncan/backend/pkg/id"
 	"github.com/kartpop/cruncan/backend/pkg/util"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
@@ -33,7 +34,11 @@ func NewApplication(name string, cfg *config.Model) *Application {
 	}
 
 	oneRequestRepo := onerequest.NewRepository(gormClient)
-	oneHandler := oneHttp.NewHandler(oneRequestRepo)
+	idService, err := id.NewServiceFromIP(cfg.PodIP)
+	if err != nil {
+		util.Fatal("failed to create id service: %v", err)
+	}
+	oneHandler := oneHttp.NewHandler(oneRequestRepo, idService)
 
 	return &Application{
 		name:           name,

@@ -1,5 +1,7 @@
 github.com/alexedwards/flow v0.1.0 h1:2JY6lesAFIxB5uEcm4coM6FM8tLNGZovVXqRRTic8a4=
 github.com/alexedwards/flow v0.1.0/go.mod h1:RtjEm3RTnsKqwE98bem/60/9cxEyZ0AQEz8GUZ0X+Ww=
+github.com/bwmarrin/snowflake v0.3.0 h1:xm67bEhkKh6ij1790JB83OujPR5CzNe8QuQqAgISZN0=
+github.com/bwmarrin/snowflake v0.3.0/go.mod h1:NdZxfVWX+oR6y2K0o6qAYv6gIOP9rjG0/E9WsDpxqwE=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1VwoXQT9A3Wy9MM3WgvqSxFWenqJduM=
@@ -29,8 +31,8 @@ github.com/jinzhu/inflection v1.0.0 h1:K317FqzuhWc8YvSVlFMCCUb36O/S9MCKRDI7QkRKD
 github.com/jinzhu/inflection v1.0.0/go.mod h1:h+uFLlag+Qp1Va5pdKtLDYj+kHp5pxUVkryuEj+Srlc=
 github.com/jinzhu/now v1.1.5 h1:/o9tlHleP7gOFmsnYNz3RGnqzefHA47wQpKrrdTIwXQ=
 github.com/jinzhu/now v1.1.5/go.mod h1:d3SSVoowX0Lcu0IBviAWJpolVfI5UJVZZ7cO71lE/z8=
-github.com/kartpop/cruncan/backend/pkg v0.0.0-20240416090132-711586e9aed6 h1:vjnhXXDLCN4GDftUrnXz2dq/8CBbuQoFY+YDSaIUwHY=
-github.com/kartpop/cruncan/backend/pkg v0.0.0-20240416090132-711586e9aed6/go.mod h1:sxtdNbCnKktO0lSZmOThxADCRfZsQy7uWaXsbT1g7pc=
+github.com/kartpop/cruncan/backend/pkg v0.0.0-20240417061835-d383f29bbcf9 h1:VkeJNLi/FjGdCzX9kNT7vd69VxalX2P1fBRYRvZfyN8=
+github.com/kartpop/cruncan/backend/pkg v0.0.0-20240417061835-d383f29bbcf9/go.mod h1:sxtdNbCnKktO0lSZmOThxADCRfZsQy7uWaXsbT1g7pc=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
 github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
 github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=

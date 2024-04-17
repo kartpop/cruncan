@@ -5,6 +5,10 @@ import (
 )
 
 type Model struct {
+	Env                        string              `mapstructure:"ENVIRONMENT"`
+	PodIP                      string              `mapstructure:"POD_IP"`
+	Version                    string              `mapstructure:"VERSION"`
+	LogLevel                   string              `mapstructure:"LOG_LEVEL"`
 	Server   ServerConfig     `mapstructure:"SERVER"`
 	Database *gormUtil.Config `mapstructure:"DATABASE"`
 	Kafka    KafkaConfig      `mapstructure:"KAFKA"`

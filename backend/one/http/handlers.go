@@ -9,16 +9,19 @@ import (
 
 	onerequest "github.com/kartpop/cruncan/backend/one/database/one_request"
 	"github.com/kartpop/cruncan/backend/pkg/model"
+	"github.com/kartpop/cruncan/backend/pkg/id"
 )
 
 type Handler struct {
 	repo   onerequest.Repository
+	idService id.Service
 	logger *slog.Logger
 }
 
-func NewHandler(repo onerequest.Repository) *Handler {
+func NewHandler(repo onerequest.Repository, idService id.Service) *Handler {
 	return &Handler{
 		repo:   repo,
+		idService: idService,
 		logger: slog.Default(),
 	}
 }
@@ -42,5 +45,16 @@ func (h *Handler) Post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.logger.Info("received request", slog.String("body", string(body)))
+	err = h.repo.Create(ctx, &onerequest.OneRequest{
+		ReqID:  h.idService.GenerateID(),
+		UserID: req.UserID,
+		Req:    body,
+	})
+	if err != nil {
+		h.logger.ErrorContext(ctx, fmt.Sprintf("failed to save request to database, error: %v", err))
+		http.Error(w, fmt.Sprintf("failed to parse OneRequest json, error: %v", err), http.StatusBadRequest)
+		return
+	}
+
+	h.logger.Info(fmt.Sprintf("successfully handled request for user: %s", req.UserID))
 }
