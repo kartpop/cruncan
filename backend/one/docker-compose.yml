@@ -2,7 +2,7 @@ version: '3.5'
 
 services:
   one-db:
-    image: postgres:14
+    image: postgres:latest
     environment:
       POSTGRES_USER: one
       POSTGRES_PASSWORD: one
@@ -12,7 +12,7 @@ services:
     volumes:
       - one-db-data:/var/lib/postgresql/data
     networks:
-      - one-network
+      - cruncan-network
 
   migration:
     image: migrate/migrate:latest
@@ -22,11 +22,11 @@ services:
     depends_on:
       - one-db
     networks:
-      - one-network
+      - cruncan-network
 
 volumes:
   one-db-data:
 
 networks:
-  one-network:
-    driver: bridge
+  cruncan-network:
+    external: true
