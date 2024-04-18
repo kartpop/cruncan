@@ -9,6 +9,7 @@ import (
 	"gorm.io/plugin/opentelemetry/tracing"
 )
 
+// NewGormClient creates a new gorm client
 func NewGormClient(config *Config) (*gorm.DB, error) {
 	conn, err := createConnection(config)
 	if err != nil {
