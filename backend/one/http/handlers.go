@@ -8,21 +8,21 @@ import (
 	"net/http"
 
 	onerequest "github.com/kartpop/cruncan/backend/one/database/one_request"
-	"github.com/kartpop/cruncan/backend/pkg/model"
 	"github.com/kartpop/cruncan/backend/pkg/id"
+	"github.com/kartpop/cruncan/backend/pkg/model"
 )
 
 type Handler struct {
-	repo   onerequest.Repository
+	repo      onerequest.Repository
 	idService id.Service
-	logger *slog.Logger
+	logger    *slog.Logger
 }
 
 func NewHandler(repo onerequest.Repository, idService id.Service) *Handler {
 	return &Handler{
-		repo:   repo,
+		repo:      repo,
 		idService: idService,
-		logger: slog.Default(),
+		logger:    slog.Default(),
 	}
 }
 

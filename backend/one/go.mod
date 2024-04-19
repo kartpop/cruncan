@@ -3,7 +3,7 @@ module github.com/kartpop/cruncan/backend/one
 go 1.22.2
 
 require (
-	github.com/kartpop/cruncan/backend/pkg v0.0.0-20240417061835-d383f29bbcf9
+	github.com/kartpop/cruncan/backend/pkg v0.0.0-20240418064231-fd8fb9d0bf60
 	github.com/spf13/viper v1.18.2 // indirect
 )
 
@@ -17,10 +17,14 @@ require (
 	github.com/jackc/pgx/v5 v5.4.3 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
+	github.com/klauspost/compress v1.17.4 // indirect
+	github.com/pierrec/lz4/v4 v4.1.19 // indirect
+	github.com/twmb/franz-go v1.16.1 // indirect
+	github.com/twmb/franz-go/pkg/kmsg v1.7.0 // indirect
 	go.opentelemetry.io/otel v1.25.0 // indirect
 	go.opentelemetry.io/otel/metric v1.25.0 // indirect
 	go.opentelemetry.io/otel/trace v1.25.0 // indirect
-	golang.org/x/crypto v0.16.0 // indirect
+	golang.org/x/crypto v0.17.0 // indirect
 	gorm.io/driver/postgres v1.5.7 // indirect
 	gorm.io/plugin/opentelemetry v0.1.4 // indirect
 )

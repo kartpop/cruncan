@@ -26,7 +26,7 @@ func NewProducer(brokers []string, topic string) *Producer {
 	return &Producer{client: client, topic: topic}
 }
 
-// SendMessage sends a message to the kafka topic
+// SendMessage sends a message to the kafka topic and returns an error if any
 func (p *Producer) SendMessage(ctx context.Context, message []byte) error {
 	b, err := json.Marshal(message)
 	if err != nil {

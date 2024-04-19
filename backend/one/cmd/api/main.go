@@ -16,14 +16,15 @@ import (
 	cfgUtil "github.com/kartpop/cruncan/backend/pkg/config"
 	gormUtil "github.com/kartpop/cruncan/backend/pkg/database/gorm"
 	"github.com/kartpop/cruncan/backend/pkg/id"
+	kafkaUtil "github.com/kartpop/cruncan/backend/pkg/kafka"
 	"github.com/kartpop/cruncan/backend/pkg/util"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
 type Application struct {
-	name           string
-	cfg            *config.Model
-	onePostHandler http.HandlerFunc
+	name       string
+	cfg        *config.Model
+	oneHandler *oneHttp.Handler
 }
 
 func NewApplication(name string, cfg *config.Model) *Application {
@@ -33,17 +34,20 @@ func NewApplication(name string, cfg *config.Model) *Application {
 		util.Fatal("database not available on startup: %v", err)
 	}
 
-	oneRequestRepo := onerequest.NewRepository(gormClient)
 	idService, err := id.NewServiceFromIP(cfg.PodIP)
 	if err != nil {
 		util.Fatal("failed to create id service: %v", err)
 	}
+
+	kafkaProducer := kafkaUtil.NewProducer([]string{cfg.Kafka.Common.BootstrapServers}, cfg.Kafka.Topic.Topic)
+
+	oneRequestRepo := onerequest.NewRepository(gormClient)
 	oneHandler := oneHttp.NewHandler(oneRequestRepo, idService)
 
 	return &Application{
-		name:           name,
-		cfg:            cfg,
-		onePostHandler: oneHandler.Post,
+		name:       name,
+		cfg:        cfg,
+		oneHandler: oneHandler,
 	}
 }
 
@@ -53,7 +57,7 @@ func (app *Application) Run() []util.TerminatorFunc {
 
 func (app *Application) routes() http.Handler {
 	mux := flow.New()
-	mux.HandleFunc("/one", app.onePostHandler, http.MethodPost)
+	mux.HandleFunc("/one", app.oneHandler.Post, http.MethodPost)
 
 	return mux
 }
