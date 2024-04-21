@@ -3,7 +3,7 @@ VERSION: "local"
 LOG_LEVEL: "debug"
 POD_IP: "127.0.0.1"
 SERVER:
-  ADDR: "127.0.0.1:8080"
+  ADDR: "127.0.0.1:8099"
   WRITE_TIMEOUT: 15
   READ_TIMEOUT: 15
   IDLE_TIMEOUT: 60
@@ -22,7 +22,7 @@ KAFKA_CONFIG:
     GROUP_ID: "one-local"
     AUTO_OFFSET_RESET: "earliest"
   ONE_REQUEST_TOPIC:
-    NAME: "one-request"
+    NAME: "one-request-local"
     PARTITION_COUNT: 1
     REPLICA_COUNT: 1
 

@@ -31,12 +31,8 @@ github.com/jinzhu/inflection v1.0.0 h1:K317FqzuhWc8YvSVlFMCCUb36O/S9MCKRDI7QkRKD
 github.com/jinzhu/inflection v1.0.0/go.mod h1:h+uFLlag+Qp1Va5pdKtLDYj+kHp5pxUVkryuEj+Srlc=
 github.com/jinzhu/now v1.1.5 h1:/o9tlHleP7gOFmsnYNz3RGnqzefHA47wQpKrrdTIwXQ=
 github.com/jinzhu/now v1.1.5/go.mod h1:d3SSVoowX0Lcu0IBviAWJpolVfI5UJVZZ7cO71lE/z8=
-github.com/kartpop/cruncan/backend/pkg v0.0.0-20240418062517-221d0a3093f5 h1:HRLvA7A4QOlccvQmw7HrVXoQKpdWrIrS+NxQub3uAfY=
-github.com/kartpop/cruncan/backend/pkg v0.0.0-20240418062517-221d0a3093f5/go.mod h1:BbyvP8ROwZv+9u3mHz3Ux78UIbTVVy+x1JfIM7hXwmU=
-github.com/kartpop/cruncan/backend/pkg v0.0.0-20240418064231-fd8fb9d0bf60 h1:JwyHFIKi660qj0z6AX1+kTrMoULN3LsZHyB43rGmgSM=
-github.com/kartpop/cruncan/backend/pkg v0.0.0-20240418064231-fd8fb9d0bf60/go.mod h1:BbyvP8ROwZv+9u3mHz3Ux78UIbTVVy+x1JfIM7hXwmU=
-github.com/kartpop/cruncan/backend/pkg v0.0.0-20240419052828-60b1d83fd2d2 h1:rg86+St4p1NM2Ws2z49iaLaSMy+ZXHz1uvp+yr8B9C4=
-github.com/kartpop/cruncan/backend/pkg v0.0.0-20240419052828-60b1d83fd2d2/go.mod h1:BbyvP8ROwZv+9u3mHz3Ux78UIbTVVy+x1JfIM7hXwmU=
+github.com/kartpop/cruncan/backend/pkg v0.0.0-20240421145108-57b2650a6f0b h1:SWviA8jl85W4KZrzf0+IdOUl5LWOASNDpCD1R/7/ocE=
+github.com/kartpop/cruncan/backend/pkg v0.0.0-20240421145108-57b2650a6f0b/go.mod h1:BbyvP8ROwZv+9u3mHz3Ux78UIbTVVy+x1JfIM7hXwmU=
 github.com/klauspost/compress v1.17.4 h1:Ej5ixsIri7BrIjBkRZLTo6ghwrEtHFk7ijlczPW4fZ4=
 github.com/klauspost/compress v1.17.4/go.mod h1:/dCuZOvVtNoHsyb+cuJD3itjs3NbnF6KH9zAO4BDxPM=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=

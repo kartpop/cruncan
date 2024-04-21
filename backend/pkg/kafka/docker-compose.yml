@@ -7,9 +7,9 @@ services:
     environment:
       KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper-server:2181
       ALLOW_PLAINTEXT_LISTENER: "yes"
-      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
-      KAFKA_CFG_LISTENERS: INSIDE://:29092,OUTSIDE://:9092
-      KAFKA_CFG_ADVERTISED_LISTENERS: INSIDE://kafka-server:29092,OUTSIDE://localhost:9092
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT,DOCKER_NET:PLAINTEXT
+      KAFKA_CFG_LISTENERS: INSIDE://:29092,OUTSIDE://:9092,DOCKER_NET://:9093
+      KAFKA_CFG_ADVERTISED_LISTENERS: INSIDE://kafka-server:29092,OUTSIDE://localhost:9092,DOCKER_NET://kafka-server:9093
       KAFKA_CFG_INTER_BROKER_LISTENER_NAME: INSIDE
       KAFKA_CFG_MESSAGE_MAX_BYTES: 2000024
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
@@ -25,6 +25,23 @@ services:
       interval: 15s
       timeout: 15s
       retries: 5
+    networks:
+      - cruncan-network
+
+  akhq:
+    image: tchiotludo/akhq:latest
+    container_name: akhq
+    environment:
+      AKHQ_CONFIGURATION: |
+        akhq:
+          connections:
+            local:
+              properties:
+                bootstrap.servers: "kafka-server:9093"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - kafka-server
     networks:
       - cruncan-network
 
