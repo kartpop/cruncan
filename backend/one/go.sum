@@ -35,6 +35,8 @@ github.com/kartpop/cruncan/backend/pkg v0.0.0-20240418062517-221d0a3093f5 h1:HRL
 github.com/kartpop/cruncan/backend/pkg v0.0.0-20240418062517-221d0a3093f5/go.mod h1:BbyvP8ROwZv+9u3mHz3Ux78UIbTVVy+x1JfIM7hXwmU=
 github.com/kartpop/cruncan/backend/pkg v0.0.0-20240418064231-fd8fb9d0bf60 h1:JwyHFIKi660qj0z6AX1+kTrMoULN3LsZHyB43rGmgSM=
 github.com/kartpop/cruncan/backend/pkg v0.0.0-20240418064231-fd8fb9d0bf60/go.mod h1:BbyvP8ROwZv+9u3mHz3Ux78UIbTVVy+x1JfIM7hXwmU=
+github.com/kartpop/cruncan/backend/pkg v0.0.0-20240419052828-60b1d83fd2d2 h1:rg86+St4p1NM2Ws2z49iaLaSMy+ZXHz1uvp+yr8B9C4=
+github.com/kartpop/cruncan/backend/pkg v0.0.0-20240419052828-60b1d83fd2d2/go.mod h1:BbyvP8ROwZv+9u3mHz3Ux78UIbTVVy+x1JfIM7hXwmU=
 github.com/klauspost/compress v1.17.4 h1:Ej5ixsIri7BrIjBkRZLTo6ghwrEtHFk7ijlczPW4fZ4=
 github.com/klauspost/compress v1.17.4/go.mod h1:/dCuZOvVtNoHsyb+cuJD3itjs3NbnF6KH9zAO4BDxPM=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=

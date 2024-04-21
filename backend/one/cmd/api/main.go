@@ -39,10 +39,13 @@ func NewApplication(name string, cfg *config.Model) *Application {
 		util.Fatal("failed to create id service: %v", err)
 	}
 
-	kafkaProducer := kafkaUtil.NewProducer([]string{cfg.Kafka.Common.BootstrapServers}, cfg.Kafka.Topic.Topic)
-
+	kafkaClient, err := kafkaUtil.NewClient(cfg.Kafka.Common)
+	if err != nil {
+		util.Fatal("failed to create kafka client: %v", err)
+	}
+	oneRequestProducer := kafkaClient.NewProducer(cfg.Kafka.OneRequestTopic.Name)
 	oneRequestRepo := onerequest.NewRepository(gormClient)
-	oneHandler := oneHttp.NewHandler(oneRequestRepo, idService)
+	oneHandler := oneHttp.NewHandler(oneRequestRepo, idService, oneRequestProducer)
 
 	return &Application{
 		name:       name,
@@ -85,7 +88,7 @@ func main() {
 		envConfig.Database.Port = *dbPort
 	}
 	if *kafkaServers != "" {
-		envConfig.Kafka.Common.BootstrapServers = *kafkaServers
+		envConfig.Kafka.Common.BootstrapServers = []string{*kafkaServers}
 	}
 
 	app := NewApplication("One", envConfig)

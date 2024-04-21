@@ -15,4 +15,14 @@ DATABASE:
   DATABASE_PASSWORD: "one"
   DATABASE_LOG_LEVEL: "Info"
   DATABASE_SSL_MODE: "prefer"
+KAFKA_CONFIG:
+  COMMON:
+    BOOTSTRAP_SERVERS:
+      - "localhost:9092"
+    GROUP_ID: "one-local"
+    AUTO_OFFSET_RESET: "earliest"
+  ONE_REQUEST_TOPIC:
+    NAME: "one-request"
+    PARTITION_COUNT: 1
+    REPLICA_COUNT: 1
 

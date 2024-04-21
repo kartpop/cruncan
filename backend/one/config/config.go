@@ -23,7 +23,6 @@ type ServerConfig struct {
 }
 
 type KafkaConfig struct {
-	Common kafkaUtil.Common `mapstructure:"COMMON"`
-	OneRequestTopic kafkaUtil.Topic `mapstructure:"ONE_REQUEST_TOPIC"`
+	Common          *kafkaUtil.Config `mapstructure:"COMMON"`
+	OneRequestTopic kafkaUtil.Topic   `mapstructure:"ONE_REQUEST_TOPIC"`
 }
-
