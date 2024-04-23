@@ -29,7 +29,7 @@ func (r *SlogOTELAttributesHandler) Enabled(ctx context.Context, level slog.Leve
 // Handle adds OTEL attributes to the log record and passes it to the child handler.
 func (r *SlogOTELAttributesHandler) Handle(ctx context.Context, rec slog.Record) error {
 	attr, _ := otelContext.SlogAttributes(ctx)
-	if attr != nil && len(attr) > 0 {
+	if len(attr) > 0 {
 		rec.AddAttrs(attr...)
 	}
 	return r.child.Handle(ctx, rec)
