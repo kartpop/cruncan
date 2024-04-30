@@ -17,21 +17,31 @@ import (
 	gormUtil "github.com/kartpop/cruncan/backend/pkg/database/gorm"
 	"github.com/kartpop/cruncan/backend/pkg/id"
 	kafkaUtil "github.com/kartpop/cruncan/backend/pkg/kafka"
+	"github.com/kartpop/cruncan/backend/pkg/otel"
 	"github.com/kartpop/cruncan/backend/pkg/util"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
+	"gorm.io/plugin/opentelemetry/tracing"
 )
 
+var tracerName = "github.com/kartpop/cruncan/backend/one/cmd/api-tracer"
+var meterName = "github.com/kartpop/cruncan/backend/one/cmd/api-meter"
+
 type Application struct {
-	name       string
-	cfg        *config.Model
-	oneHandler *oneHttp.Handler
+	name        string
+	cfg         *config.Model
+	oneHandler  *oneHttp.Handler
+	kafkaClient *kafkaUtil.Client
 }
 
-func NewApplication(name string, cfg *config.Model) *Application {
+func NewApplication(ctx context.Context, name string, cfg *config.Model) *Application {
 
 	gormClient, err := gormUtil.NewGormClient(cfg.Database)
 	if err != nil {
 		util.Fatal("database not available on startup: %v", err)
+	}
+	err = gormClient.Use(tracing.NewPlugin())
+	if err != nil {
+		util.Fatal("unable to setup tracing and metrics in gorm: %v", err)
 	}
 
 	idService, err := id.NewServiceFromIP(cfg.PodIP)
@@ -44,7 +54,7 @@ func NewApplication(name string, cfg *config.Model) *Application {
 		util.Fatal("failed to create kafka client: %v", err)
 	}
 	oneRequestProducer := kafkaClient.NewProducer(cfg.Kafka.OneRequestTopic.Name)
-	oneRequestRepo := onerequest.NewRepository(gormClient)
+	oneRequestRepo := onerequest.NewRepository(gormClient).WithTracing()
 	oneHandler := oneHttp.NewHandler(oneRequestRepo, idService, oneRequestProducer)
 
 	return &Application{
@@ -55,7 +65,12 @@ func NewApplication(name string, cfg *config.Model) *Application {
 }
 
 func (app *Application) Run() []util.TerminatorFunc {
-	return []util.TerminatorFunc{}
+	return []util.TerminatorFunc{
+		func(ctx context.Context) error {
+			app.kafkaClient.Close()
+			return nil
+		},
+	}
 }
 
 func (app *Application) routes() http.Handler {
@@ -66,7 +81,8 @@ func (app *Application) routes() http.Handler {
 }
 
 func main() {
-	ctx := context.Background()
+	ctx, cancel := otel.Setup(tracerName, meterName)
+	defer cancel()
 
 	var httpAddr string
 	flag.StringVar(&httpAddr, "http", "", "address to listen for http traffic")
@@ -91,7 +107,7 @@ func main() {
 		envConfig.Kafka.Common.BootstrapServers = []string{*kafkaServers}
 	}
 
-	app := NewApplication("One", envConfig)
+	app := NewApplication(ctx, "One", envConfig)
 
 	server := &http.Server{
 		Addr:         envConfig.Server.Addr,

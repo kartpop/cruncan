@@ -34,6 +34,10 @@ func NewRepository(db *gorm.DB) *RepositoryImpl {
 	}
 }
 
+func (r *RepositoryImpl) WithTracing() *TracingRepository {
+	return NewTracingRepository(r)
+}
+
 func (r *RepositoryImpl) Create(ctx context.Context, req *OneRequest) error {
 	return r.db.WithContext(ctx).Create(req).Error
 }
