@@ -55,7 +55,7 @@ func NewApplication(ctx context.Context, name string, cfg *config.Model) *Applic
 	}
 	oneRequestProducer := kafkaClient.NewProducer(cfg.Kafka.OneRequestTopic.Name)
 	oneRequestRepo := onerequest.NewRepository(gormClient).WithTracing()
-	oneHandler := oneHttp.NewHandler(oneRequestRepo, idService, oneRequestProducer)
+	oneHandler := oneHttp.NewHandler(ctx, oneRequestRepo, idService, oneRequestProducer)
 
 	return &Application{
 		name:       name,
