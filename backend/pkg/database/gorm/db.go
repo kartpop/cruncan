@@ -30,6 +30,9 @@ func connect(dialector gorm.Dialector, config *Config) (*gorm.DB, error) {
 	}
 
 	err = db.Use(tracing.NewPlugin())
+	if err != nil {
+		return nil, err
+	}
 
 	err = setTimeOutsAndMaxConns(db)
 	if err != nil {
