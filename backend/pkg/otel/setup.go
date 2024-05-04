@@ -10,7 +10,7 @@ func Setup(tracerName string, meterName string) (context.Context, func()) {
 	ctx := context.Background()
 
 	// initialize OTEL logger
-	ctx, cancelLogger, err := InitLogger(ctx)
+	ctx, cancelLogger, err := InitLogger(ctx, WithConsoleHandler())
 	if err != nil {
 		util.Fatal("error initializing logger: %v", err)
 	}
