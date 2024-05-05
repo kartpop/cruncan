@@ -20,7 +20,6 @@ import (
 	"github.com/kartpop/cruncan/backend/pkg/otel"
 	"github.com/kartpop/cruncan/backend/pkg/util"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
-	"gorm.io/plugin/opentelemetry/tracing"
 )
 
 var tracerName = "github.com/kartpop/cruncan/backend/one/cmd/api-tracer"
@@ -38,10 +37,6 @@ func NewApplication(ctx context.Context, name string, cfg *config.Model) *Applic
 	gormClient, err := gormUtil.NewGormClient(cfg.Database)
 	if err != nil {
 		util.Fatal("database not available on startup: %v", err)
-	}
-	err = gormClient.Use(tracing.NewPlugin())
-	if err != nil {
-		util.Fatal("unable to setup tracing and metrics in gorm: %v", err)
 	}
 
 	idService, err := id.NewServiceFromIP(cfg.PodIP)
@@ -61,6 +56,7 @@ func NewApplication(ctx context.Context, name string, cfg *config.Model) *Applic
 		name:       name,
 		cfg:        cfg,
 		oneHandler: oneHandler,
+		kafkaClient: kafkaClient,
 	}
 }
 
