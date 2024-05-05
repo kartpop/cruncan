@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"net/url"
 	"os"
 	"sort"
 	"strconv"
@@ -17,6 +18,7 @@ import (
 	logsSdk "github.com/agoda-com/opentelemetry-logs-go/sdk/logs"
 	otelContext "github.com/kartpop/cruncan/backend/pkg/otel/context"
 	slogmulti "github.com/samber/slog-multi"
+	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/sdk/resource"
 )
 
@@ -24,6 +26,7 @@ type LoggerConfig struct {
 	extraHandler []slog.Handler
 	level        slog.Level
 	testBuffer   *bytes.Buffer
+	consoleOnly  bool
 }
 
 type LoggerOption interface {
@@ -84,6 +87,14 @@ func WithTestBuffer(buffer *bytes.Buffer) LoggerOption {
 	}, -999998)
 }
 
+// WithConsoleOnly configures the logger to only send logs to the console
+func WithConsoleOnly() LoggerOption {
+	return newLoggerOption(func(cfg LoggerConfig) LoggerConfig {
+		cfg.consoleOnly = true
+		return cfg
+	}, 0)
+}
+
 // WithLevel sets the log level for the logger
 func WithLevel(level slog.Level) LoggerOption {
 	return newLoggerOption(func(cfg LoggerConfig) LoggerConfig {
@@ -130,7 +141,11 @@ func WithEnvLevel(env ...string) LoggerOption {
 // Use WithExtraHandler to add extra custom handlers to the logger.
 func InitLogger(ctx context.Context, loggerOptions ...LoggerOption) (context.Context, func(), error) {
 
-	loggerOptions, cfg := renderConfig(loggerOptions)
+	cfg := renderConfig(loggerOptions)
+
+	if cfg.consoleOnly {
+		return initConsoleOnlyLogger(ctx, cfg)
+	}
 
 	// configure opentelemetry logger provider
 	logExporter, err := otlplogs.NewExporter(ctx)
@@ -184,7 +199,7 @@ func InitLogger(ctx context.Context, loggerOptions ...LoggerOption) (context.Con
 	}, nil
 }
 
-func renderConfig(loggerOptions []LoggerOption) ([]LoggerOption, LoggerConfig) {
+func renderConfig(loggerOptions []LoggerOption) LoggerConfig {
 	if len(loggerOptions) > 1 {
 		sort.Slice(loggerOptions, func(i, j int) bool {
 			return loggerOptions[i].prio() < loggerOptions[j].prio()
@@ -207,9 +222,82 @@ func renderConfig(loggerOptions []LoggerOption) ([]LoggerOption, LoggerConfig) {
 	for _, opt := range loggerOptions {
 		cfg = opt.apply(cfg)
 	}
-	return loggerOptions, cfg
+	return cfg
 }
 
 func noop() {
 	// no-op
+}
+
+func initConsoleOnlyLogger(ctx context.Context, cfg LoggerConfig) (context.Context, func(), error) {
+
+	var handler slog.Handler
+	var w io.Writer
+	if cfg.testBuffer != nil {
+		w = cfg.testBuffer
+	} else {
+		w = os.Stdout
+	}
+	handler = slog.NewJSONHandler(w, &slog.HandlerOptions{
+		Level: cfg.level,
+	})
+
+	if len(cfg.extraHandler) > 0 {
+		allHandlers := append(cfg.extraHandler, handler)
+		handler = NewSlogOTELAttributesHandler(slogmulti.Fanout(allHandlers...))
+	} else {
+		handler = NewSlogOTELAttributesHandler(handler)
+	}
+
+	logger := slog.New(handler)
+
+	osn := os.Getenv("OTEL_SERVICE_NAME")
+	if osn != "" {
+		logger = logger.With(slog.String("service.name", osn))
+	}
+	res, err := OTELResourceAttributes(os.Getenv("OTEL_EXTRA_ATTRIBUTES"))
+	if err != nil {
+		return ctx, noop, fmt.Errorf("failed to create log resource: %v", err)
+	}
+	logger = logger.With(res...)
+
+	//configure default logger
+	slog.SetDefault(logger)
+
+	ctx = otelContext.WithLogger(ctx, logger)
+
+	return ctx, noop, nil
+}
+
+// errMissingValue is returned when a resource value is missing.
+var errMissingValue = fmt.Errorf("%w: missing value", resource.ErrPartialResource)
+
+func OTELResourceAttributes(s string) ([]any, error) {
+	if s == "" {
+		return nil, nil
+	}
+	pairs := strings.Split(s, ",")
+	var attrs []any
+	var invalid []string
+	for _, p := range pairs {
+		k, v, found := strings.Cut(p, "=")
+		if !found {
+			invalid = append(invalid, p)
+			continue
+		}
+		key := strings.TrimSpace(k)
+		val, err := url.PathUnescape(strings.TrimSpace(v))
+		if err != nil {
+			// Retain original value if decoding fails, otherwise it will be
+			// an empty string.
+			val = v
+			otel.Handle(err)
+		}
+		attrs = append(attrs, slog.String(key, val))
+	}
+	var err error
+	if len(invalid) > 0 {
+		err = fmt.Errorf("%w: %v", errMissingValue, invalid)
+	}
+	return attrs, err
 }
