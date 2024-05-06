@@ -39,8 +39,8 @@ github.com/jinzhu/inflection v1.0.0 h1:K317FqzuhWc8YvSVlFMCCUb36O/S9MCKRDI7QkRKD
 github.com/jinzhu/inflection v1.0.0/go.mod h1:h+uFLlag+Qp1Va5pdKtLDYj+kHp5pxUVkryuEj+Srlc=
 github.com/jinzhu/now v1.1.5 h1:/o9tlHleP7gOFmsnYNz3RGnqzefHA47wQpKrrdTIwXQ=
 github.com/jinzhu/now v1.1.5/go.mod h1:d3SSVoowX0Lcu0IBviAWJpolVfI5UJVZZ7cO71lE/z8=
-github.com/kartpop/cruncan/backend/pkg v0.0.0-20240504112119-2d3a4c6e0d7c h1:c915ow5XLoaErdyIlikhPAb6J0BbFk2RT3MHmx4eJRs=
-github.com/kartpop/cruncan/backend/pkg v0.0.0-20240504112119-2d3a4c6e0d7c/go.mod h1:cZLcXUWsrRmU97vWpGDgVDVbh0CwEoQ1u/m2+5hr43g=
+github.com/kartpop/cruncan/backend/pkg v0.0.0-20240505111751-e3eda55b32db h1:urggHsgFYWMpvkMaR15d04dyEWiV53MlHWKITAECw/Q=
+github.com/kartpop/cruncan/backend/pkg v0.0.0-20240505111751-e3eda55b32db/go.mod h1:cZLcXUWsrRmU97vWpGDgVDVbh0CwEoQ1u/m2+5hr43g=
 github.com/klauspost/compress v1.17.4 h1:Ej5ixsIri7BrIjBkRZLTo6ghwrEtHFk7ijlczPW4fZ4=
 github.com/klauspost/compress v1.17.4/go.mod h1:/dCuZOvVtNoHsyb+cuJD3itjs3NbnF6KH9zAO4BDxPM=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
