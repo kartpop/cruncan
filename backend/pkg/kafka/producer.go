@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"sync"
 
-	"github.com/kartpop/cruncan/backend/pkg/util"
 	"github.com/twmb/franz-go/pkg/kgo"
 )
 
@@ -15,14 +14,7 @@ type Producer struct {
 }
 
 // NewProducer creates a new kafka producer
-func NewProducer(brokers []string, topic string) *Producer {
-	client, err := kgo.NewClient(
-		kgo.SeedBrokers(brokers...),
-	)
-	if err != nil {
-		util.Fatal("failed to create kafka client for topic: %s, error: %v", topic, err)
-	}
-
+func NewProducer(client *kgo.Client, topic string) *Producer {
 	return &Producer{client: client, topic: topic}
 }
 

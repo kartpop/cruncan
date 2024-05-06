@@ -11,6 +11,7 @@ func NewClient(config *Config) (*Client, error) {
 	client, err := kgo.NewClient(
 		kgo.SeedBrokers(config.BootstrapServers...),
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -25,5 +26,10 @@ func (c *Client) Close() {
 
 // NewProducer creates a new kafka producer
 func (c *Client) NewProducer(topic string) *Producer {
-	return &Producer{client: c.client, topic: topic}
+	return NewProducer(c.client, topic)
+}
+
+// NewConsumer creates a new kafka consumer
+func (c *Client) NewConsumer(topic string) *Consumer {
+	return NewConsumer(c.client, topic)
 }
