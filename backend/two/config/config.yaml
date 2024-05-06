@@ -1,0 +1,23 @@
+ENVIRONMENT: "local"
+VERSION: "local"
+LOG_LEVEL: "debug"
+POD_IP: "127.0.0.1"
+DATABASE:
+  DATABASE_SERVER: "127.0.0.1"
+  DATABASE_PORT: 54329
+  DATABASE_NAME: "two-db-local"
+  DATABASE_USER: "two"
+  DATABASE_PASSWORD: "two"
+  DATABASE_LOG_LEVEL: "Info"
+  DATABASE_SSL_MODE: "prefer"
+KAFKA_CONFIG:
+  COMMON:
+    BOOTSTRAP_SERVERS:
+      - "localhost:9092"
+    GROUP_ID: "two-local"
+    AUTO_OFFSET_RESET: "earliest"
+  ONE_REQUEST_TOPIC:
+    NAME: "one-request-local"
+    PARTITION_COUNT: 1
+    REPLICA_COUNT: 1
+
