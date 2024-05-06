@@ -46,6 +46,7 @@ func (c *Consumer) Start(ctx context.Context, handler ConsumerHandler) {
 				record := iter.Next()
 				if record.Topic == c.topic {
 					// ignore error here, handle it in the handler
+					// but keep err in signature for future use
 					_ = handler.Handle(record.Value, record.Topic)
 				}
 			}

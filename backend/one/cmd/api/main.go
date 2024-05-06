@@ -33,7 +33,6 @@ type Application struct {
 }
 
 func NewApplication(ctx context.Context, name string, cfg *config.Model) *Application {
-
 	gormClient, err := gormUtil.NewGormClient(cfg.Database)
 	if err != nil {
 		util.Fatal("database not available on startup: %v", err)
@@ -103,7 +102,7 @@ func main() {
 		envConfig.Kafka.Common.BootstrapServers = []string{*kafkaServers}
 	}
 
-	app := NewApplication(ctx, "One", envConfig)
+	app := NewApplication(ctx, "one-api", envConfig)
 
 	server := &http.Server{
 		Addr:         envConfig.Server.Addr,
