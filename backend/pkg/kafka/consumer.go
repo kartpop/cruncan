@@ -20,6 +20,7 @@ type Consumer struct {
 
 // NewConsumer creates a new kafka consumer
 func NewConsumer(client *kgo.Client, topic string) *Consumer {
+	// REVISIT: AddConsumeTopics has tradeoffs in terms of partitions
 	client.AddConsumeTopics(topic)
 	return &Consumer{client: client, topic: topic}
 }

@@ -10,6 +10,7 @@ type Client struct {
 func NewClient(config *Config) (*Client, error) {
 	client, err := kgo.NewClient(
 		kgo.SeedBrokers(config.BootstrapServers...),
+		kgo.ConsumerGroup(config.GroupId),
 	)
 
 	if err != nil {
