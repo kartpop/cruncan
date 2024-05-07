@@ -29,6 +29,7 @@ func NewConsumer(client *kgo.Client, topic string) *Consumer {
 func (c *Consumer) Start(ctx context.Context, handler ConsumerHandler) {
 	go func() {
 		for {
+			// Poll 
 			fetches := c.client.PollFetches(ctx)
 			if errs := fetches.Errors(); len(errs) > 0 {
 				for _, err := range errs {
@@ -41,6 +42,7 @@ func (c *Consumer) Start(ctx context.Context, handler ConsumerHandler) {
 				slog.ErrorContext(ctx, fmt.Sprint(errs))
 			}
 
+			// Process the records
 			iter := fetches.RecordIter()
 			for !iter.Done() {
 				record := iter.Next()
@@ -49,6 +51,11 @@ func (c *Consumer) Start(ctx context.Context, handler ConsumerHandler) {
 					// but keep err in signature for future use
 					_ = handler.Handle(ctx, record.Value, record.Topic)
 				}
+			}
+
+			// Commit the offsets
+			if err := c.client.CommitUncommittedOffsets(ctx); err != nil {
+				slog.ErrorContext(ctx, fmt.Sprintf("Failed to commit offsets: %v", err))
 			}
 		}
 	}()
