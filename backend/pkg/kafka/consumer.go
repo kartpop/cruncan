@@ -10,7 +10,7 @@ import (
 )
 
 type ConsumerHandler interface {
-	Handle([]byte, string) error
+	Handle(context.Context, []byte, string) error
 }
 
 type Consumer struct {
@@ -47,7 +47,7 @@ func (c *Consumer) Start(ctx context.Context, handler ConsumerHandler) {
 				if record.Topic == c.topic {
 					// ignore error here, handle it in the handler
 					// but keep err in signature for future use
-					_ = handler.Handle(record.Value, record.Topic)
+					_ = handler.Handle(ctx, record.Value, record.Topic)
 				}
 			}
 		}
