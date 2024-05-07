@@ -19,11 +19,11 @@ var tracerName = "github.com/kartpop/cruncan/backend/two/cmd/consumer-tracer"
 var meterName = "github.com/kartpop/cruncan/backend/two/cmd/consumer-meter"
 
 type Application struct {
-	ctx context.Context
-	name string
-	cfg  *config.Model
-	kafkaClient *kafkaUtil.Client
-	oneRequestConsumer *kafkaUtil.Consumer
+	ctx                    context.Context
+	name                   string
+	cfg                    *config.Model
+	kafkaClient            *kafkaUtil.Client
+	oneRequestConsumer     *kafkaUtil.Consumer
 	oneRequestKafkaHandler *onerequest.KafkaHandler
 }
 
@@ -34,14 +34,14 @@ func NewApplication(ctx context.Context, name string, cfg *config.Model) *Applic
 	}
 
 	oneRequestConsumer := kafkaClient.NewConsumer(cfg.Kafka.OneRequestTopic.Name)
-	oneRequestKafkaHandler := onerequest.NewKafkaHandler()
+	oneRequestKafkaHandler := onerequest.NewKafkaHandler(ctx)
 
 	return &Application{
-		ctx: ctx,
-		name: name,
-		cfg: cfg,
-		kafkaClient: kafkaClient,
-		oneRequestConsumer: oneRequestConsumer,
+		ctx:                    ctx,
+		name:                   name,
+		cfg:                    cfg,
+		kafkaClient:            kafkaClient,
+		oneRequestConsumer:     oneRequestConsumer,
 		oneRequestKafkaHandler: oneRequestKafkaHandler,
 	}
 }
@@ -89,6 +89,6 @@ func main() {
 
 	util.GracefulShutdown(
 		nil, time.Second*5,
-		terminatorFunctions...
+		terminatorFunctions...,
 	)
 }

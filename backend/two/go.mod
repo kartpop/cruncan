@@ -2,7 +2,11 @@ module github.com/kartpop/cruncan/backend/two
 
 go 1.22.2
 
-require github.com/kartpop/cruncan/backend/pkg v0.0.0-20240506080333-84051ea98720
+require (
+	github.com/kartpop/cruncan/backend/pkg v0.0.0-20240507121234-96a4d359d808
+	go.opentelemetry.io/otel v1.25.0
+	go.opentelemetry.io/otel/trace v1.25.0
+)
 
 require (
 	github.com/agoda-com/opentelemetry-go/otelslog v0.1.1 // indirect
@@ -35,14 +39,12 @@ require (
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/twmb/franz-go v1.16.1 // indirect
 	github.com/twmb/franz-go/pkg/kmsg v1.7.0 // indirect
-	go.opentelemetry.io/otel v1.25.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.25.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.25.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.25.0 // indirect
 	go.opentelemetry.io/otel/metric v1.25.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.25.0 // indirect
 	go.opentelemetry.io/otel/sdk/metric v1.25.0 // indirect
-	go.opentelemetry.io/otel/trace v1.25.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.2.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/crypto v0.22.0 // indirect
