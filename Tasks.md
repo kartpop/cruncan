@@ -1,4 +1,4 @@
-- Crud application
+- Crud application (refer updated Subtasks section below for latest)
   1. POST request: rest api handler + unique auth id generator + save to PostgresDB + publish message to kafka + godog/cucumber component test
        - add open telemetry logging/monitoring/metrics for this request using Prometheus/Grafana stack
   2. Kafka consumer: consumer handler + save to PostgresDB + send grpc request to payments service + make client request to 3rd party API + godog/cucumber component test
@@ -27,7 +27,19 @@ Subtasks
      - prometheus/grafana stack docker-compose
      - logging/traces/metrics
 
-2. Kafka consumer + grpc + client request
+2. Kafka consumer + grpc send request
      - kafka consumer
-     - grpc
-     - client request
+     - grpc send request
+     - save to db
+
+3. grpc receive request + send http client request
+
+3b.  graphql
+     - 1. graphql query to fetch data....related to http query created in 1. POST
+     - 1. graphql mutation to register user preferences
+     
+
+4. reverse flow
+     - 3. get http client response + send grpc response
+     - 2. receive grpc response + send kafka message (part of same kafka handler as in 2.)
+     - 1. kafka consumer for second topic + save to db
