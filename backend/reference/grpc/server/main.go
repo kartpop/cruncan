@@ -19,13 +19,14 @@ func (s *server) DoTransaction(ctx context.Context, in *pb.TransactionRequest) (
 	log.Printf("Received transaction request id: %v", in.GetId())
 
 	log.Println("Processing transaction...")
-	log.Printf("Amount: %v transferred from source account id: %v to target accound id: %v", in.GetAmount(), in.GetSourceAccountId(), in.GetTargetAccountId())
+	transferred := in.GetAmount() + in.GetInterest()
 
-	return &pb.TransactionResponse{Success: true}, nil
+	log.Printf("Amount: %v transferred from source account id: %v to target accound id: %v", transferred, in.GetSourceAccountId(), in.GetTargetAccountId())
+
+	return &pb.TransactionResponse{Success: true, Transferred: transferred}, nil
 }
 
 func main() {
-
 	lis, err := net.Listen("tcp", "localhost:8443")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)

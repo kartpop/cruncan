@@ -13,9 +13,11 @@ message TransactionRequest {
   string sourceAccountId = 2;
   string targetAccountId = 3;
   int64 amount = 4;
+  int64 interest = 5;
 }
 
 message TransactionResponse {
   bool success = 1;
-  string errorMssg = 2;
+  int64 transferred = 2;
+  string errorMssg = 3;
 }
