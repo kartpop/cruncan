@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package model;
+
+option go_package = "./model";
+
+service PaymentsService {
+  rpc DoTransaction (TransactionRequest) returns (TransactionResponse);
+}
+
+message TransactionRequest {
+  string id = 1;
+  string sourceAccountId = 2;
+  string targetAccountId = 3;
+  int64 amount = 4;
+}
+
+message TransactionResponse {
+  bool success = 1;
+  string errorMssg = 2;
+}
