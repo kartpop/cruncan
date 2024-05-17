@@ -43,3 +43,10 @@ Subtasks
      - 3. get http client response + send grpc response
      - 2. receive grpc response + send kafka message (part of same kafka handler as in 2.)
      - 1. kafka consumer for second topic + save to db
+
+
+Priority
+- retry job using redsync + godog test
+- http client request + godog test
+- godog test for one request
+- Dockerfile
