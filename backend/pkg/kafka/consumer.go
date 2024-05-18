@@ -30,7 +30,7 @@ func NewConsumer(client *kgo.Client, topic string) *Consumer {
 func (c *Consumer) Start(ctx context.Context, handler ConsumerHandler) {
 	go func() {
 		for {
-			// Poll 
+			// Poll
 			fetches := c.client.PollFetches(ctx)
 			if errs := fetches.Errors(); len(errs) > 0 {
 				for _, err := range errs {
