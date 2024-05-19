@@ -5,6 +5,8 @@ import (
 	"flag"
 	"fmt"
 	"log/slog"
+	"net/http"
+	"net/http/httptrace"
 	"time"
 
 	cfgUtil "github.com/kartpop/cruncan/backend/pkg/config"
@@ -13,6 +15,8 @@ import (
 	"github.com/kartpop/cruncan/backend/pkg/util"
 	"github.com/kartpop/cruncan/backend/two/config"
 	"github.com/kartpop/cruncan/backend/two/onerequest"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/httptrace/otelhttptrace"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
 var tracerName = "github.com/kartpop/cruncan/backend/two/cmd/consumer-tracer"
@@ -32,6 +36,16 @@ func NewApplication(ctx context.Context, name string, cfg *config.Model) *Applic
 	if err != nil {
 		util.Fatal("failed to create kafka client: %v", err)
 	}
+
+	httpClient := &http.Client{
+		Transport: otelhttp.NewTransport(
+			http.DefaultTransport,
+			otelhttp.WithClientTrace(func(ctx context.Context) *httptrace.ClientTrace {
+				return otelhttptrace.NewClientTrace(ctx)
+			}),
+		),
+	}
+	_ = httpClient // TODO: wip, remove after use
 
 	oneRequestConsumer := kafkaClient.NewConsumer(cfg.Kafka.OneRequestTopic.Name)
 	oneRequestKafkaHandler := onerequest.NewKafkaHandler(ctx)

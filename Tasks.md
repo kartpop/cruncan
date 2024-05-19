@@ -46,7 +46,6 @@ Subtasks
 
 
 Priority
-- retry job using redsync + godog test
-- http client request + godog test
+- two http client request + access token + godog test
 - godog test for one request
 - Dockerfile
