@@ -47,5 +47,6 @@ Subtasks
 
 Priority
 - two http client request + access token + godog test
+- access token validate and verify
 - godog test for one request
 - Dockerfile
