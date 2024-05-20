@@ -103,7 +103,7 @@ func Test_clientCache_GetToken(t *testing.T) {
 				tt.clientExpectations(client)
 			}
 
-			cc := NewClientCache(client)
+			cc := NewClientCache(client, time.Now().UTC)
 			if tt.cachedToken != nil {
 				cc.token.Store(tt.cachedToken)
 			}
@@ -120,7 +120,7 @@ func Test_clientCache_GetToken(t *testing.T) {
 func Test_isTokenExpired(t *testing.T) {
 	ctx := context.TODO()
 	authClient := NewMockClient(gomock.NewController(t))
-	cacheClient := NewClientCache(authClient)
+	cacheClient := NewClientCache(authClient, time.Now().UTC)
 
 	t.Run("token generated 10 minutes ago (has 5 minutes of validity left), token is valid and must return false", func(t *testing.T) {
 		cacheClient.now = func() time.Time {

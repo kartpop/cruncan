@@ -16,10 +16,10 @@ type clientCache struct {
 	mutex  *sync.Mutex
 }
 
-func NewClientCache(client Client) *clientCache {
+func NewClientCache(client Client, now func () time.Time) *clientCache {
 	cl := &clientCache{
 		client: client,
-		now:    func() time.Time { return time.Now().UTC() },
+		now:    now,
 		mutex:  &sync.Mutex{},
 	}
 	cl.token.Store(&Token{})
