@@ -36,18 +36,20 @@ type Client interface {
 }
 
 type client struct {
+	HttpClient   *http.Client
 	BaseUrl      *url.URL
 	ClientID     string
 	ClientSecret string
 }
 
-func NewClient(clientId, clientSecret, baseUrl string) (*client, error) {
+func NewClient(httpClient *http.Client, clientId, clientSecret, baseUrl string) (*client, error) {
 	url, err := url.Parse(baseUrl)
 	if err != nil {
 		return nil, err
 	}
 
 	return &client{
+		HttpClient:   httpClient,
 		BaseUrl:      url,
 		ClientID:     clientId,
 		ClientSecret: clientSecret,
@@ -70,7 +72,7 @@ func (c *client) GetToken(ctx context.Context) (*Token, error) {
 	request.SetBasicAuth(c.ClientID, c.ClientSecret)
 	request.Header.Set(contentTypeHeader, "application/x-www-form-urlencoded")
 
-	response, err := http.DefaultClient.Do(request)
+	response, err := c.HttpClient.Do(request)
 	if err != nil {
 		return nil, fmt.Errorf("error while sending request: %v", err)
 	}

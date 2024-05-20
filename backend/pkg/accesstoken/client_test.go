@@ -56,7 +56,7 @@ func (c *ClientSuite) Test_GetTokenFromApigee_HappyPath() {
 	defer testserver.Close()
 	baseURL = testserver.URL
 
-	client, err := NewClient(clientID, clientSecret, baseURL)
+	client, err := NewClient(&http.Client{}, clientID, clientSecret, baseURL)
 	c.Require().NoError(err)
 
 	token, err := client.GetToken(context.Background())
@@ -86,7 +86,7 @@ func (c *ClientSuite) Test_GetTokenFromApigee_Failure() {
 	defer testserver.Close()
 	baseURL = testserver.URL
 
-	client, err := NewClient(clientID, clientSecret, baseURL)
+	client, err := NewClient(&http.Client{}, clientID, clientSecret, baseURL)
 	c.Require().NoError(err)
 
 	token, err := client.GetToken(context.Background())
