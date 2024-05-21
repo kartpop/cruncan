@@ -24,7 +24,7 @@ func NewJob(logger *slog.Logger, rs *redsync.Redsync) *Job {
 
 func (j *Job) Start(ctx context.Context) {
 	if j.ticker != nil {
-		j.logger.WarnContext(ctx, "trying to start a CDR partner transaction retry job that is already running")
+		j.logger.WarnContext(ctx, "trying to start a transaction retry job that is already running")
 		return
 	}
 
@@ -34,38 +34,38 @@ func (j *Job) Start(ctx context.Context) {
 	go func() {
 		for t := range j.ticker.C {
 			j.logger.DebugContext(ctx, fmt.Sprintf("starting transaction retry job at %v", t))
-			failedPartnerTxns := GetFailedTransactions()
+			failedTxns := GetFailedTransactions()
 
-			for _, failedPartnerTxn := range failedPartnerTxns {
-				j.ProcessSingleTxn(ctx, failedPartnerTxn)
+			for _, failedTxn := range failedTxns {
+				j.ProcessSingleTxn(ctx, failedTxn)
 			}
 
-			j.logger.InfoContext(ctx, "finished CDR partner transaction retry job")
+			j.logger.InfoContext(ctx, "finished transaction retry job")
 		}
 	}()
 }
 
-func (j *Job) ProcessSingleTxn(ctx context.Context, failedPartnerTxn Transaction) {
-	mutex := j.rs.NewMutex(failedPartnerTxn.ID, redsync.WithExpiry(60*time.Second))
+func (j *Job) ProcessSingleTxn(ctx context.Context, failedTxn Transaction) {
+	mutex := j.rs.NewMutex(failedTxn.ID, redsync.WithExpiry(60*time.Second))
 	if err := mutex.Lock(); err != nil {
-		j.logger.ErrorContext(ctx, fmt.Sprintf("failed to obtain redsync mutex for transacation %s: %v", failedPartnerTxn.ID, err.Error()))
+		j.logger.ErrorContext(ctx, fmt.Sprintf("failed to obtain redsync mutex for transacation %s: %v", failedTxn.ID, err.Error()))
 		return
 	}
 
 	defer func() {
 		if ok, err := mutex.Unlock(); !ok || err != nil {
-			j.logger.ErrorContext(ctx, fmt.Sprintf("failed to release redsync mutex for transaction %s: %v", failedPartnerTxn.ID, err.Error()))
+			j.logger.ErrorContext(ctx, fmt.Sprintf("failed to release redsync mutex for transaction %s: %v", failedTxn.ID, err.Error()))
 		}
 	}()
 
 	// lock acquired, recheck transaction state
-	if IsTransactionFailed(failedPartnerTxn) {
-		j.logger.DebugContext(ctx, fmt.Sprintf("retrying transaction %s", failedPartnerTxn.ID))
+	if IsTransactionFailed(failedTxn) {
+		j.logger.DebugContext(ctx, fmt.Sprintf("retrying transaction %s", failedTxn.ID))
 
 		// business logic for retry
 		// ...
 	} else {
-		j.logger.DebugContext(ctx, fmt.Sprintf("transaction %s already processed", failedPartnerTxn.ID))
+		j.logger.DebugContext(ctx, fmt.Sprintf("transaction %s already processed", failedTxn.ID))
 	}
 }
 
