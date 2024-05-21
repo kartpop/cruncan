@@ -3,7 +3,7 @@ VERSION: "local"
 LOG_LEVEL: "debug"
 POD_IP: "127.0.0.1"
 DATABASE:
-  DATABASE_SERVER: "127.0.0.1"
+  DATABASE_SERVER: "localhost"
   DATABASE_PORT: 54329
   DATABASE_NAME: "two-db-local"
   DATABASE_USER: "two"
@@ -20,4 +20,10 @@ KAFKA_CONFIG:
     NAME: "one-request-local"
     PARTITION_COUNT: 1
     REPLICA_COUNT: 1
+AUTH_CONFIG:
+  CLIENT_ID: "two-222"
+  CLIENT_SECRET: ""
+  TOKEN_URL: "http://localhost:9999"
+THREE_CONFIG:
+  URL: "http://localhost:8099"
 

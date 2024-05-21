@@ -10,6 +10,7 @@ import (
 	"net/http/httputil"
 	"time"
 
+	"github.com/kartpop/cruncan/backend/pkg/accesstoken"
 	"github.com/kartpop/cruncan/backend/pkg/model"
 	otelContext "github.com/kartpop/cruncan/backend/pkg/otel/context"
 	"go.opentelemetry.io/otel/attribute"
@@ -26,17 +27,19 @@ const (
 )
 
 type Client struct {
-	httpClient *http.Client
-	baseUrl    string
-	logger     *slog.Logger
+	httpClient  *http.Client
+	baseUrl     string
+	logger      *slog.Logger
+	tokenClient accesstoken.Client
 }
 
-func NewClient(httpClient *http.Client, baseUrl string, logger *slog.Logger) *Client {
+func NewClient(httpClient *http.Client, baseUrl string, logger *slog.Logger, tokenClient accesstoken.Client) *Client {
 	httpClient.Timeout = DefaultTimeout
 	return &Client{
-		httpClient: httpClient,
-		baseUrl:    baseUrl,
-		logger:     logger,
+		httpClient:  httpClient,
+		baseUrl:     baseUrl,
+		logger:      logger,
+		tokenClient: tokenClient,
 	}
 }
 
@@ -48,10 +51,7 @@ func (c *Client) PostThreeRequest(ctx context.Context, threeReq *model.ThreeRequ
 
 	reqJson, err := json.Marshal(threeReq)
 	if err != nil {
-		errMssg := fmt.Sprintf("failed to marshal three request: %v", err)
-		span.SetStatus(codes.Error, errMssg)
-		span.RecordError(err)
-		return nil, fmt.Errorf(errMssg)
+		return nil, c.logAndRecordError(ctx, span, err, "failed to marshal three request")
 	}
 
 	span.SetAttributes(
@@ -60,16 +60,19 @@ func (c *Client) PostThreeRequest(ctx context.Context, threeReq *model.ThreeRequ
 			Value: attribute.StringValue(string(reqJson)),
 		})
 
+	accessToken, err := c.tokenClient.GetToken(ctx)
+	if err != nil {
+		return nil, c.logAndRecordError(ctx, span, err, "failed to get access token")
+	}
+
 	req, err := http.NewRequest(http.MethodPost, c.baseUrl, bytes.NewReader(reqJson))
 	if err != nil {
-		errMssg := fmt.Sprintf("failed to create request: %v", err)
-		span.SetStatus(codes.Error, errMssg)
-		span.RecordError(err)
-		return nil, fmt.Errorf(errMssg)
+		return nil, c.logAndRecordError(ctx, span, err, "failed to create request")
 	}
 
 	req.Header.Add(ContentType, ApplicationJson)
 	req.Header.Add("language", "en")
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", accessToken))
 	req.URL.Path += threeRequestPath
 	req = req.WithContext(ctx)
 
@@ -79,12 +82,17 @@ func (c *Client) PostThreeRequest(ctx context.Context, threeReq *model.ThreeRequ
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		errMssg := fmt.Sprintf("failed to send request: %v", err)
-		span.SetStatus(codes.Error, errMssg)
-		span.RecordError(err)
-		return nil, fmt.Errorf(errMssg)
+		return nil, c.logAndRecordError(ctx, span, err, "failed to send request")
 	}
 
 	span.SetStatus(codes.Ok, "request sent")
 	return resp, nil
+}
+
+func (c *Client) logAndRecordError(ctx context.Context, span trace.Span, err error, errPrefix string) error {
+	errMssg := fmt.Sprintf("%s: %v", errPrefix, err)
+	c.logger.ErrorContext(ctx, errMssg)
+	span.SetStatus(codes.Error, errMssg)
+	span.RecordError(err)
+	return fmt.Errorf(errMssg)
 }

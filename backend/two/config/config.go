@@ -12,9 +12,21 @@ type Model struct {
 	LogLevel string           `mapstructure:"LOG_LEVEL"`
 	Database *gormUtil.Config `mapstructure:"DATABASE"`
 	Kafka    KafkaConfig      `mapstructure:"KAFKA_CONFIG"`
+	Auth     AuthConfig       `mapstructure:"AUTH_CONFIG"`
+	Three    ThreeConfig      `mapstructure:"THREE_CONFIG"`
 }
 
 type KafkaConfig struct {
 	Common          *kafkaUtil.Config `mapstructure:"COMMON"`
 	OneRequestTopic kafkaUtil.Topic   `mapstructure:"ONE_REQUEST_TOPIC"`
+}
+
+type AuthConfig struct {
+	ClientID     string `mapstructure:"CLIENT_ID"`
+	ClientSecret string `mapstructure:"CLIENT_SECRET"`
+	TokenURL     string `mapstructure:"TOKEN_URL"`
+}
+
+type ThreeConfig struct {
+	Url string `mapstructure:"URL"`
 }

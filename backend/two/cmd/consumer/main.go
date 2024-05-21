@@ -9,11 +9,13 @@ import (
 	"net/http/httptrace"
 	"time"
 
+	"github.com/kartpop/cruncan/backend/pkg/accesstoken"
 	cfgUtil "github.com/kartpop/cruncan/backend/pkg/config"
 	kafkaUtil "github.com/kartpop/cruncan/backend/pkg/kafka"
 	"github.com/kartpop/cruncan/backend/pkg/otel"
 	"github.com/kartpop/cruncan/backend/pkg/util"
 	"github.com/kartpop/cruncan/backend/two/config"
+	httpInternal "github.com/kartpop/cruncan/backend/two/http"
 	"github.com/kartpop/cruncan/backend/two/onerequest"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/httptrace/otelhttptrace"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
@@ -45,10 +47,16 @@ func NewApplication(ctx context.Context, name string, cfg *config.Model) *Applic
 			}),
 		),
 	}
-	_ = httpClient // TODO: wip, remove after use
+
+	tokenClient, err := accesstoken.NewClient(httpClient, cfg.Auth.ClientID, cfg.Auth.ClientSecret, cfg.Auth.TokenURL)
+	if err != nil {
+		util.Fatal("failed to create access token client: %v", err)
+	}
+	tokenCacheClient := accesstoken.NewClientCache(tokenClient, time.Now().UTC)
+	threeClient := httpInternal.NewClient(httpClient, cfg.Three.Url, slog.Default(), tokenCacheClient)
 
 	oneRequestConsumer := kafkaClient.NewConsumer(cfg.Kafka.OneRequestTopic.Name)
-	oneRequestKafkaHandler := onerequest.NewKafkaHandler(ctx)
+	oneRequestKafkaHandler := onerequest.NewKafkaHandler(ctx, threeClient)
 
 	return &Application{
 		ctx:                    ctx,

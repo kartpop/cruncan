@@ -3,12 +3,16 @@ module github.com/kartpop/cruncan/backend/two
 go 1.22.2
 
 require (
-	github.com/kartpop/cruncan/backend/pkg v0.0.0-20240518162647-87a639efd88d
+	github.com/kartpop/cruncan/backend/pkg v0.0.0-20240520030812-b59ccb6d4cc9
 	go.opentelemetry.io/otel v1.26.0
 	go.opentelemetry.io/otel/trace v1.26.0
 )
 
-require github.com/felixge/httpsnoop v1.0.4 // indirect
+require (
+	github.com/avast/retry-go v3.0.0+incompatible // indirect
+	github.com/felixge/httpsnoop v1.0.4 // indirect
+	github.com/golang/mock v1.6.0 // indirect
+)
 
 require (
 	github.com/agoda-com/opentelemetry-go/otelslog v0.1.1 // indirect
