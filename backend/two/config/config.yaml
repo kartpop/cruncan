@@ -21,9 +21,9 @@ KAFKA_CONFIG:
     PARTITION_COUNT: 1
     REPLICA_COUNT: 1
 AUTH_CONFIG:
-  CLIENT_ID: "two-222"
-  CLIENT_SECRET: ""
-  TOKEN_URL: "http://localhost:9999"
+  CLIENT_ID: "client-id"
+  CLIENT_SECRET: "client-secret"
+  TOKEN_URL: "http://localhost:8099"
 THREE_CONFIG:
   URL: "http://localhost:8099"
 

@@ -1,0 +1,14 @@
+version: '3.5'
+
+services:
+  wiremock:
+    image: "wiremock/wiremock:latest"
+    ports:
+      - "8099:8080"
+    entrypoint: [ "/docker-entrypoint.sh", "--global-response-templating", "--disable-gzip", "--verbose" ]
+    networks:
+      - cruncan-network
+
+networks:
+  cruncan-network:
+    external: true
