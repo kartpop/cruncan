@@ -1,6 +1,21 @@
 version: '3.5'
 
 services:
+  consumer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      KAFKA_CONFIG.COMMON.BOOTSTRAP_SERVERS: kafka-server:29092
+      AUTH_CONFIG.TOKEN_URL: http://wiremock:8080
+      THREE_CONFIG.URL: http://wiremock:8080
+    ports:
+      - "8082:8082"
+    depends_on:
+      - wiremock
+    networks:
+      - cruncan-network
+
   wiremock:
     image: "wiremock/wiremock:latest"
     ports:

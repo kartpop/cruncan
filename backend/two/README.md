@@ -3,12 +3,12 @@ A service which consumes messages from onerequest kafka topic and sends a POST r
 
 ## Setup
 
-- ensure kafka and grafana stack are running
+- ensure cruncan-network is up and kafka and grafana stack are running
 - setup dependencies (wiremock etc.)
     ```shell
     docker compose up -d
     ```
-- run app
+- run app (skip this if running containerized app via docker compose)
     ```shell
     go run cmd/consumer/main.go
     ```
