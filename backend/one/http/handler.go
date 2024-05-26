@@ -10,7 +10,6 @@ import (
 
 	onerequest "github.com/kartpop/cruncan/backend/one/database/onerequest"
 	"github.com/kartpop/cruncan/backend/pkg/id"
-	kafkaUtil "github.com/kartpop/cruncan/backend/pkg/kafka"
 	"github.com/kartpop/cruncan/backend/pkg/model"
 	otelContext "github.com/kartpop/cruncan/backend/pkg/otel/context"
 	"github.com/kartpop/cruncan/backend/pkg/util"
@@ -26,24 +25,35 @@ const (
 	SuccessPostMeterName = "http.handlers.Post.success"
 	// HandledPostMeterName is the name of the handled post meter
 	HandledPostMeterName = "http.handlers.Post.handled"
+
+	ErrFailedToReadRequestBody       = "failed to read request body"
+	ErrFailedToParseOneRequest       = "failed to parse OneRequest json"
+	ErrFailedToSendKafkaMessage      = "failed to send message to kafka"
+	ErrFailedToSaveRequestToDatabase = "failed to save request to database"
+	ErrFailedToMarshalResponse       = "failed to marshal response"
 )
 
 type Response struct {
 	ReqID string `json:"request_id"`
 }
 
+type Producer interface {
+	SendMessage(ctx context.Context, message []byte) error
+	Close()
+}
+
 type Handler struct {
 	repo             onerequest.Repository
 	idService        id.Service
 	logger           *slog.Logger
-	kafkaProd        *kafkaUtil.Producer
+	kafkaProd        Producer
 	tracer           trace.Tracer
 	successPostMeter metric.Int64Counter
 	failedPostMeter  metric.Int64Counter
 	handledPostMeter metric.Int64Counter
 }
 
-func NewHandler(ctx context.Context, repo onerequest.Repository, idService id.Service, kafkaProd *kafkaUtil.Producer) *Handler {
+func NewHandler(ctx context.Context, repo onerequest.Repository, idService id.Service, kafkaProd Producer) *Handler {
 	tracer, _ := otelContext.Tracer(ctx)
 	meter, _ := otelContext.Meter(ctx)
 
@@ -77,7 +87,7 @@ func (h *Handler) Post(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		errMsg := fmt.Sprintf("failed to read request body: %v", err)
+		errMsg := fmt.Sprintf("%s: %v", ErrFailedToReadRequestBody, err)
 		http.Error(w, errMsg, http.StatusInternalServerError)
 		h.logAndMonitorError(ctx, errMsg, span, err)
 		return
@@ -86,7 +96,7 @@ func (h *Handler) Post(w http.ResponseWriter, r *http.Request) {
 	var req model.OneRequest
 	err = json.Unmarshal(body, &req)
 	if err != nil {
-		errMsg := fmt.Sprintf("failed to parse OneRequest json: %s, error: %v", body, err)
+		errMsg := fmt.Sprintf("%s: %s, error: %v", ErrFailedToParseOneRequest, body, err)
 		http.Error(w, errMsg, http.StatusBadRequest)
 		h.logAndMonitorError(ctx, errMsg, span, err)
 		return
@@ -96,7 +106,7 @@ func (h *Handler) Post(w http.ResponseWriter, r *http.Request) {
 	// the request ID in the message
 	err = h.kafkaProd.SendMessage(ctx, body)
 	if err != nil {
-		errMsg := fmt.Sprintf("failed to send message to kafka, error: %v", err)
+		errMsg := fmt.Sprintf("%s, error: %v", ErrFailedToSendKafkaMessage, err)
 		http.Error(w, errMsg, http.StatusInternalServerError)
 		h.logAndMonitorError(ctx, errMsg, span, err)
 		return
@@ -110,7 +120,7 @@ func (h *Handler) Post(w http.ResponseWriter, r *http.Request) {
 		Req:    body,
 	})
 	if err != nil {
-		errMsg := fmt.Sprintf("failed to save request to database, error: %v", err)
+		errMsg := fmt.Sprintf("%s, error: %v", ErrFailedToSaveRequestToDatabase, err)
 		http.Error(w, errMsg, http.StatusInternalServerError)
 		h.logAndMonitorError(ctx, errMsg, span, err)
 		return
@@ -121,7 +131,7 @@ func (h *Handler) Post(w http.ResponseWriter, r *http.Request) {
 	}
 	resBody, err := json.Marshal(res)
 	if err != nil {
-		errMsg := fmt.Sprintf("failed to marshal response, error: %v", err)
+		errMsg := fmt.Sprintf("%s, error: %v", ErrFailedToMarshalResponse, err)
 		http.Error(w, errMsg, http.StatusInternalServerError)
 		h.logAndMonitorError(ctx, errMsg, span, err)
 		return
