@@ -14,6 +14,7 @@ var WiremockClient = wiremock.NewClient("http://localhost:8099")
 var kafkaClient = initKafkaClient()
 var OneRequestProducer = kafkaClient.NewProducer(EnvConfig.Kafka.OneRequestTopic.Name)
 
+// TODO: client is not closed anywhere yet after initialization, refer one service tests
 func initKafkaClient() *kafkaUtil.Client {
 	kafkaClient, err := kafkaUtil.NewClient(EnvConfig.Kafka.Common)
 	if err != nil {
