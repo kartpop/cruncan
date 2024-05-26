@@ -46,6 +46,5 @@ Subtasks
 
 
 Priority
+- write UT for kafkahandler in two
 - access token validate and verify
-- godog test for one request
-- Dockerfile
