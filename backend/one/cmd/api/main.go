@@ -11,7 +11,7 @@ import (
 
 	"github.com/alexedwards/flow"
 	"github.com/kartpop/cruncan/backend/one/config"
-	onerequest "github.com/kartpop/cruncan/backend/one/database/one_request"
+	"github.com/kartpop/cruncan/backend/one/database/onerequest"
 	oneHttp "github.com/kartpop/cruncan/backend/one/http"
 	cfgUtil "github.com/kartpop/cruncan/backend/pkg/config"
 	gormUtil "github.com/kartpop/cruncan/backend/pkg/database/gorm"
@@ -20,6 +20,7 @@ import (
 	"github.com/kartpop/cruncan/backend/pkg/otel"
 	"github.com/kartpop/cruncan/backend/pkg/util"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
+	"gorm.io/gorm"
 )
 
 var tracerName = "github.com/kartpop/cruncan/backend/one/cmd/api-tracer"
@@ -30,6 +31,7 @@ type Application struct {
 	cfg         *config.Model
 	oneHandler  *oneHttp.Handler
 	kafkaClient *kafkaUtil.Client
+	gormClient  *gorm.DB
 }
 
 func NewApplication(ctx context.Context, name string, cfg *config.Model) *Application {
@@ -52,10 +54,11 @@ func NewApplication(ctx context.Context, name string, cfg *config.Model) *Applic
 	oneHandler := oneHttp.NewHandler(ctx, oneRequestRepo, idService, oneRequestProducer)
 
 	return &Application{
-		name:       name,
-		cfg:        cfg,
-		oneHandler: oneHandler,
+		name:        name,
+		cfg:         cfg,
+		oneHandler:  oneHandler,
 		kafkaClient: kafkaClient,
+		gormClient:  gormClient,
 	}
 }
 
@@ -64,6 +67,13 @@ func (app *Application) Run() []util.TerminatorFunc {
 		func(ctx context.Context) error {
 			app.kafkaClient.Close()
 			return nil
+		},
+		func(ctx context.Context) error {
+			gormDB, err := app.gormClient.DB()
+			if err != nil {
+				return err
+			}
+			return gormDB.Close()
 		},
 	}
 }

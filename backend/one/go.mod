@@ -3,7 +3,7 @@ module github.com/kartpop/cruncan/backend/one
 go 1.22.2
 
 require (
-	github.com/kartpop/cruncan/backend/pkg v0.0.0-20240506080333-84051ea98720
+	github.com/kartpop/cruncan/backend/pkg v0.0.0-20240523113659-4c29f2176e60
 	github.com/spf13/viper v1.18.2 // indirect
 )
 
@@ -18,10 +18,16 @@ require (
 	github.com/agoda-com/opentelemetry-logs-go v0.5.0 // indirect
 	github.com/bwmarrin/snowflake v0.3.0 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
+	github.com/cucumber/gherkin/go/v26 v26.2.0 // indirect
+	github.com/cucumber/messages/go/v21 v21.0.1 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/go-logr/logr v1.4.1 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
+	github.com/gofrs/uuid v4.3.1+incompatible // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.1 // indirect
+	github.com/hashicorp/go-immutable-radix v1.3.1 // indirect
+	github.com/hashicorp/go-memdb v1.3.4 // indirect
+	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/pgx/v5 v5.4.3 // indirect
@@ -51,6 +57,7 @@ require (
 
 require (
 	github.com/alexedwards/flow v0.1.0
+	github.com/cucumber/godog v0.14.1
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect

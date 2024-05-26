@@ -32,3 +32,18 @@ func (r *TracingRepository) Create(ctx context.Context, req *OneRequest) error {
 
 	return err
 }
+
+func (r *TracingRepository) Get(ctx context.Context, id string) (*OneRequest, error) {
+	tracer, _ := otelContext.Tracer(ctx)
+	ctx, span := tracer.Start(ctx, "oneRequest.Get")
+	defer span.End()
+
+	oneReq, err := r.repo.Get(ctx, id)
+	if err != nil {
+		otel.SetSpanErrorWithMessage(span, err, fmt.Sprintf("failed to get one request: %v", err))
+	} else {
+		otel.SetSpanOk(span)
+	}
+
+	return oneReq, err
+}

@@ -8,7 +8,7 @@ import (
 	"log/slog"
 	"net/http"
 
-	onerequest "github.com/kartpop/cruncan/backend/one/database/one_request"
+	onerequest "github.com/kartpop/cruncan/backend/one/database/onerequest"
 	"github.com/kartpop/cruncan/backend/pkg/id"
 	kafkaUtil "github.com/kartpop/cruncan/backend/pkg/kafka"
 	"github.com/kartpop/cruncan/backend/pkg/model"
@@ -27,6 +27,10 @@ const (
 	// HandledPostMeterName is the name of the handled post meter
 	HandledPostMeterName = "http.handlers.Post.handled"
 )
+
+type Response struct {
+	ReqID string `json:"request_id"`
+}
 
 type Handler struct {
 	repo             onerequest.Repository
@@ -88,6 +92,8 @@ func (h *Handler) Post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// TODO: kafka message should be sent after the request is saved to the database; should also include
+	// the request ID in the message
 	err = h.kafkaProd.SendMessage(ctx, body)
 	if err != nil {
 		errMsg := fmt.Sprintf("failed to send message to kafka, error: %v", err)
@@ -96,8 +102,10 @@ func (h *Handler) Post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	reqID := h.idService.GenerateID()
+
 	err = h.repo.Create(ctx, &onerequest.OneRequest{
-		ReqID:  h.idService.GenerateID(),
+		ReqID:  reqID,
 		UserID: req.UserID,
 		Req:    body,
 	})
@@ -108,8 +116,21 @@ func (h *Handler) Post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	res := Response{
+		ReqID: reqID,
+	}
+	resBody, err := json.Marshal(res)
+	if err != nil {
+		errMsg := fmt.Sprintf("failed to marshal response, error: %v", err)
+		http.Error(w, errMsg, http.StatusInternalServerError)
+		h.logAndMonitorError(ctx, errMsg, span, err)
+		return
+	}
+
 	h.successPostMeter.Add(ctx, 1)
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
+	w.Write(resBody)
 	span.SetStatus(codes.Ok, "request processed successfully")
 }
 

@@ -22,6 +22,7 @@ func (OneRequest) TableName() string {
 
 type Repository interface {
 	Create(ctx context.Context, req *OneRequest) error
+	Get(ctx context.Context, reqId string) (*OneRequest, error)
 }
 
 type RepositoryImpl struct {
@@ -40,4 +41,10 @@ func (r *RepositoryImpl) WithTracing() *TracingRepository {
 
 func (r *RepositoryImpl) Create(ctx context.Context, req *OneRequest) error {
 	return r.db.WithContext(ctx).Create(req).Error
+}
+
+func (r *RepositoryImpl) Get(ctx context.Context, reqId string) (*OneRequest, error) {
+	var oneReq OneRequest
+	err := r.db.WithContext(ctx).Where("req_id = ?", reqId).First(&oneReq).Error
+	return &oneReq, err
 }

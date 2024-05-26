@@ -1,0 +1,14 @@
+{
+  "user_id": "old-usr-5",
+  "prompt": "What is the value of k1?",
+  "data": [
+    {
+      "key": "k1",
+      "value": "15"
+    },
+    {
+      "key": "k2",
+      "value": "g3"
+    }
+  ]
+}
