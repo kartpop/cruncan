@@ -10,6 +10,8 @@ import (
 )
 
 type ConsumerHandler interface {
+	// Handle is called for each message received from the kafka topic. The handle accepts 
+	// the context, message and topic.
 	Handle(context.Context, []byte, string) error
 }
 
