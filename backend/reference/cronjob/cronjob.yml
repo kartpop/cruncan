@@ -1,0 +1,59 @@
+# apiVersion: batch/v1
+# kind: CronJob
+# metadata:
+#   name: cronjobs
+# spec:
+#   concurrencyPolicy: Forbid
+#   schedule: "{{ .Values.cronjobs.schedule  }}"
+#   jobTemplate:
+#     spec:
+#       template:
+#         spec:
+#           {{- with .Values.cronjobs.image.imagePullSecrets }}
+#           imagePullSecrets:
+#             {{- toYaml . | nindent 12 }}
+#           {{- end }}
+#           serviceAccountName: {{ include "chart.serviceAccountName" . }}
+#           securityContext:
+#             {{- toYaml .Values.podSecurityContext | nindent 12 }}
+#           volumes:
+#             - name: secret-kafka-ssl
+#               secret:
+#                 secretName: secret-kafka-ssl
+#             - name: db-migrations
+#               configMap:
+#                 name: db-migrations
+#           containers:
+#             - name: {{ template "service.cronjobs.fullname" . }}
+#               securityContext:
+#                 {{- toYaml .Values.securityContext | nindent 16 }}
+#               image: "{{ .Values.cronjobs.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+#               imagePullPolicy: {{ .Values.cronjobs.image.pullPolicy }}
+#               {{- if .Values.application.secrets }}
+#               env:
+#                 - name: DATABASE.DATABASE_USER
+#                   valueFrom:
+#                     secretKeyRef:
+#                       name: {{ .Values.application.secrets.DB_CREDENTIALS }}
+#                       key: username  
+#                 - name: DATABASE.DATABASE_PASSWORD
+#                   valueFrom:
+#                     secretKeyRef:
+#                       name: {{ .Values.application.secrets.DB_CREDENTIALS }}
+#                       key: password
+#                 - name: KAFKA.COMMON.BOOTSTRAP_SERVERS
+#                   valueFrom:
+#                     secretKeyRef:
+#                       name: {{ .Values.application.secrets.KAFKA_SECRET }}
+#                       key: kafka.brokers
+#               {{- end }}
+#               envFrom:
+#                 - configMapRef:
+#                     name: {{ .Values.application.envConfigMapName }}
+#               resources:
+#                 {{- toYaml .Values.resources | nindent 16 }}
+#               volumeMounts:
+#                 - mountPath: /ssl
+#                   name: secret-kafka-ssl
+#                   readOnly: true
+#           restartPolicy: OnFailure

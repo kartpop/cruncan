@@ -1,0 +1,14 @@
+cronjobs:
+  name: cronjobs
+  schedule: "*/5 * * * *"   # every 5 minutes
+  autoscaling:
+    minReplicas: 1
+    maxReplicas: 1
+  image:
+    repository: something.amazonaws.com/cronjobs
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+    fullnameOverride: "cronjobs"
+    pullPolicy: IfNotPresent
+    imagePullSecrets: [name: registry-secret]
+    nameOverride: ""
