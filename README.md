@@ -1,5 +1,6 @@
 # cruncan
 
-Git setup for accessing this private repo
-1. Append `github.com/kartpop/cruncan` to GOPRIVATE env var
-2. Add `url.https://<YOUR-PAT>@github.com/.insteadof=https://github.com/` to git config
+Simple reference repository of useful backend patterns:
+- one: REST API, kafka producer, postgres, cucumber/godog test suite
+- two: kafka consumer, http request, tests with wiremock
+- pkg: access token, unique id generator, gorm, kafka common, otel (grafana stack)
