@@ -1,6 +1,6 @@
 # cruncan - A Reference Backend Architecture
 
-## 1. Project Philosophy & Introduction
+## 1. Introduction
 
 `cruncan` is a reference repository designed to encapsulate and demonstrate a wide range of best practices and patterns for building scalable, observable, and maintainable microservices in Go. The project intentionally uses generic, dummy names for its services (`one`, `two`, etc.) to focus purely on the architectural and implementation patterns rather than a specific business domain.
 
